@@ -13,7 +13,10 @@ import {
   registerSuccess,
 } from "../actions/authActions";
 
-axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+
+process.env.REACT_APP_BASE_URL
+  ? (axios.defaults.baseURL = process.env.REACT_APP_BASE_URL)
+  : (axios.defaults.baseURL = "https://goit-phonebook-api.herokuapp.com");
 
 const token = {
   set(token) {
@@ -29,7 +32,7 @@ const register = (credentials) => (dispatch) => {
 
   axios
     .post("/users/signup", credentials)
-    .then(({data}) => {
+    .then(({ data }) => {
       token.set(data.token);
       dispatch(registerSuccess(data));
     })
@@ -41,7 +44,7 @@ const logIn = (credentials) => (dispatch) => {
 
   axios
     .post("/users/login", credentials)
-    .then(({data}) => {
+    .then(({ data }) => {
       token.set(data.token);
       dispatch(loginSuccess(data));
     })
@@ -61,7 +64,6 @@ const logOut = () => (dispatch) => {
 };
 
 const getCurrentUser = () => (dispatch, getState) => {
- 
   const {
     auth: { token: persistedToken },
   } = getState();
@@ -73,7 +75,7 @@ const getCurrentUser = () => (dispatch, getState) => {
 
   axios
     .get("/users/current")
-    .then(({data}) => {
+    .then(({ data }) => {
       dispatch(getCurrentUserSuccess(data));
     })
     .catch((error) => dispatch(getCurrentUserError(error)));
